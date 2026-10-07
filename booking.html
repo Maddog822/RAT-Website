@@ -7,57 +7,107 @@
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 </head>
-<body>
+<body data-nav="booking">
 
   <!-- ===== NAVBAR (same as every page) ===== -->
   <nav class="navbar">
     <a class="logo" href="index.html"><img src="images/logo.svg" alt="Rent-a-Tech logo"></a>
-    <a href="services.html">Services</a>
-    <a href="booking.html">Booking</a>
-    <a href="guide.html">Guide</a>
-    <a href="map.html">Map</a>
-    <a href="review.html">Review</a>
-    <a href="help.html">Help</a>
+    <a href="services.html">services</a>
+    <a href="booking.html">booking</a>
+    <a href="guide.html">guide</a>
+    <a href="map.html">map</a>
+    <a href="review.html">review</a>
+    <a href="help.html">help</a>
   </nav>
 
   <!-- ===== BOOKING FORM ===== -->
   <main class="page">
-    <h1>Book a Tech</h1>
-    <p class="page-intro">Tell us what you need and pick a day.</p>
+    <h1>Book a tech</h1>
+    <p class="page-intro">Pick a service and a time. We'll email you as soon as your tech confirms.</p>
 
-    <!-- action="#" means nothing is sent anywhere yet. See the note at the bottom. -->
-    <form class="form" id="booking-form" action="#" method="post">
+    <form class="form form-wide" id="booking-form">
 
-      <!-- Service dropdown. Rename the options to match your real services. -->
-      <label for="service">Service</label>
-      <select id="service" name="service" required>
-        <option value="" disabled selected>Choose a service</option>
-        <option value="service-1">Hardware</option>
-        <option value="service-2">Software</option>
-        <option value="service-3">PC Building</option>
-        <option value="service-4">Wifi and Networking</option>
-        <option value="service-5">Virus Removal</option>
-        <option value="service-6">Mounting and Cabling</option>
-        <option value="service-7">Other</option>
-      </select>
+      <!-- Row 1: service, date, and time side by side on wide screens (stacked on phones) -->
+      <div class="form-row cols-3">
+        <div class="field">
+          <label for="service">Service</label>
+          <select id="service" name="service" required>
+            <option value="" disabled selected>Choose a service</option>
+            <option>Hardware</option>
+            <option>Software</option>
+            <option>PC Building</option>
+            <option>Wifi and Networking</option>
+            <option>Virus Removal</option>
+            <option>Mounting and Cabling</option>
+            <option>Other</option>
+          </select>
+        </div>
 
-      <!-- Description box where the customer explains the issue -->
-      <label for="description">Describe the issue</label>
-      <textarea id="description" name="description" rows="5" placeholder="Tell us what's going on, what device it is, and anything you've already tried." required></textarea>
+        <div class="field">
+          <label for="date">Date</label>
+          <input type="date" id="date" name="date" required>
+        </div>
 
-      <!-- Date picker. Browsers show a built-in calendar for type="date". -->
-      <label for="date">Preferred date</label>
-      <input type="date" id="date" name="date" required>
+        <!-- Times are filled in by the script below after you pick a date -->
+        <div class="field">
+          <label for="time">Time</label>
+          <select id="time" name="time" required disabled>
+            <option value="" disabled selected>Pick a date first</option>
+          </select>
+          <p class="form-hint" id="time-hint"></p>
+        </div>
+      </div>
+
+      <!-- Row 2: description takes the full width -->
+      <div class="field">
+        <label for="description">Describe the issue</label>
+        <textarea id="description" name="description" rows="5" maxlength="1000" placeholder="What's going on, what device is it, and what have you tried?" required></textarea>
+      </div>
+
+      <!-- Row 3: name, email, and phone -->
+      <div class="form-row cols-3">
+        <div class="field">
+          <label for="name">Full name</label>
+          <input type="text" id="name" name="name" maxlength="80" autocomplete="name" required>
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" maxlength="120" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label for="phone">Phone number</label>
+          <input type="text" id="phone" name="phone" maxlength="30" inputmode="tel" autocomplete="tel" required>
+        </div>
+      </div>
+
+      <!-- Row 4: street address (wider) and ZIP code -->
+      <div class="form-row cols-address">
+        <div class="field">
+          <label for="address">Street address</label>
+          <input type="text" id="address" name="address" maxlength="120" autocomplete="street-address" required>
+        </div>
+
+        <div class="field">
+          <label for="zip">ZIP code</label>
+          <input type="text" id="zip" name="zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" autocomplete="postal-code" required>
+        </div>
+      </div>
+
+      <!-- Hidden spam trap. Real visitors never see it, bots fill it in. Leave it as is. -->
+      <div style="position:absolute; left:-9999px;" aria-hidden="true">
+        <input type="text" name="company" tabindex="-1" autocomplete="off">
+      </div>
 
       <button type="submit" class="signup-btn">Request booking</button>
 
-      <!-- Shown after a successful submit -->
-      <p class="form-message" id="message" hidden>Thanks! Your booking request was received.</p>
+      <p class="form-message" id="message" hidden></p>
     </form>
   </main>
 
   <!-- ===== FOOTER (same as every page) ===== -->
-    <footer class="footer">
+  <footer class="footer">
     <a class="footer-logo" href="index.html"><img src="images/logo.svg" alt="Rent-a-Tech logo"></a>
 
     <div class="footer-contact">
@@ -75,7 +125,97 @@
     </div>
   </footer>
 
-  
+  <!-- ===== BOOKING SCRIPT ===== -->
+  <script>
+    // Paste your Google Apps Script web app address here (it ends in /exec)
+    var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwthf_UNv-6CDKBvg60E5bWcIW4U1J8GbTd7f5EOEQGmlVD3kM3-ZbcMSQ31Y3cDW4YLg/exec";
+
+    var form = document.getElementById("booking-form");
+    var dateInput = document.getElementById("date");
+    var timeSelect = document.getElementById("time");
+    var hint = document.getElementById("time-hint");
+    var msg = document.getElementById("message");
+
+    // Only allow dates from today to 60 days ahead
+    var today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    dateInput.min = today.toISOString().split("T")[0];
+    var last = new Date(today.getTime() + 60 * 86400000);
+    dateInput.max = last.toISOString().split("T")[0];
+
+    function resetTimes(text) {
+      timeSelect.innerHTML = "";
+      var o = document.createElement("option");
+      o.value = "";
+      o.disabled = true;
+      o.selected = true;
+      o.textContent = text;
+      timeSelect.appendChild(o);
+      timeSelect.disabled = true;
+    }
+
+    // When a date is picked, ask the booking script which times are open
+    dateInput.addEventListener("change", async function () {
+      hint.textContent = "";
+      if (!dateInput.value) { resetTimes("Pick a date first"); return; }
+      resetTimes("Loading times...");
+      try {
+        var res = await fetch(SCRIPT_URL + "?date=" + encodeURIComponent(dateInput.value));
+        var data = await res.json();
+        if (!data.slots || !data.slots.length) {
+          resetTimes("No openings");
+          hint.textContent = "No openings that day. Please pick another date.";
+          return;
+        }
+        resetTimes("Choose a time");
+        data.slots.forEach(function (s) {
+          var o = document.createElement("option");
+          o.value = s.start;
+          o.textContent = s.label;
+          timeSelect.appendChild(o);
+        });
+        timeSelect.disabled = false;
+      } catch (err) {
+        resetTimes("Couldn't load times");
+        hint.textContent = "Couldn't load times. Please try again.";
+      }
+    });
+
+    // Send the booking
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      msg.hidden = false;
+      if (SCRIPT_URL.indexOf("PASTE") === 0) {
+        msg.textContent = "Booking isn't connected yet. Add your web app address to SCRIPT_URL.";
+        return;
+      }
+      if (!timeSelect.value) {
+        msg.textContent = "Please choose a date and time.";
+        return;
+      }
+      var btn = form.querySelector("button[type=submit]");
+      btn.disabled = true;
+      msg.textContent = "Sending...";
+      try {
+        var res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: new URLSearchParams(new FormData(form))
+        });
+        var data = await res.json();
+        if (data.ok) {
+          msg.textContent = "Request sent! We'll email you as soon as your tech confirms.";
+          form.reset();
+          resetTimes("Pick a date first");
+        } else {
+          msg.textContent = data.error || "Something went wrong. Please try again.";
+          dateInput.dispatchEvent(new Event("change"));   // refresh the open times
+        }
+      } catch (err) {
+        msg.textContent = "Something went wrong. Please try again or contact us directly.";
+      }
+      btn.disabled = false;
+    });
+  </script>
 
 </body>
 </html>

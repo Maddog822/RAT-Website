@@ -565,3 +565,36 @@ a.tile:focus-visible {
   height: 32px;
   width: auto;
 }
+
+/* ===== BOOKING FORM EXTRAS ===== */
+.form select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-hint {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+
+/* ===== WIDER BOOKING FORM ===== */
+/* The booking form is wider than the sign up form */
+.form.form-wide {
+  max-width: 760px;
+}
+
+/* Rows of fields: one column on phones, side by side on wider screens */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  column-gap: 16px;
+}
+
+.field {
+  min-width: 0;
+}
+
+@media (min-width: 720px) {
+  .form-row.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .form-row.cols-address { grid-template-columns: 2fr 1fr; }
+}
