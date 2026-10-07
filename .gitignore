@@ -1,0 +1,29 @@
+# ===== Computer-generated junk files =====
+# Mac folder settings
+.DS_Store
+# Windows thumbnail cache
+Thumbs.db
+desktop.ini
+
+# ===== Editor settings =====
+# VS Code settings folder (Live Server and other extensions put files here)
+.vscode/
+
+# ===== Secrets =====
+# Never upload passwords, API keys, or private keys.
+# If you add a form service or payments later, keep the private keys in one of these files.
+.env
+.env.*
+*.key
+*.pem
+
+# ===== Tools you may add later =====
+node_modules/
+npm-debug.log*
+
+# ===== Backups and drafts =====
+*.zip
+*.bak
+*.tmp
+*~
+drafts/
